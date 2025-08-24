@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - product-management-system
+
   postgres:
     image: postgres:16
     environment:
