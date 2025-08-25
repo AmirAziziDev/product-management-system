@@ -10,6 +10,15 @@ import (
 	"go.uber.org/zap"
 )
 
+type ProductsResponse struct {
+	Data []models.Product `json:"data"`
+	Meta struct {
+		Total    int `json:"total"`
+		Page     int `json:"page"`
+		PageSize int `json:"page_size"`
+	} `json:"meta"`
+}
+
 func ListProducts(logger *zap.Logger, repo repositories.ProductRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		logger.Info("ListProducts handler called")
@@ -53,13 +62,13 @@ func ListProducts(logger *zap.Logger, repo repositories.ProductRepository) gin.H
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": products,
-			"meta": gin.H{
-				"total":     total,
-				"page":      page,
-				"page_size": pageSize,
-			},
-		})
+		response := ProductsResponse{
+			Data: products,
+		}
+		response.Meta.Total = total
+		response.Meta.Page = page
+		response.Meta.PageSize = pageSize
+
+		c.JSON(http.StatusOK, response)
 	}
 }
