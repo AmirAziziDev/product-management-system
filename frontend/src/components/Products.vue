@@ -9,8 +9,9 @@ const page = ref(1)
 const pageSize = ref(20)
 
 const headers = [
-  { title: 'Code', align: 'start', sortable: false, key: 'code' },
+  { title: 'SKU', align: 'start', sortable: false, key: 'sku' },
   { title: 'Name', align: 'start', sortable: false, key: 'name' },
+  { title: 'Product Type', align: 'start', sortable: false, key: 'product_type_name' },
   { title: 'Description', align: 'start', sortable: false, key: 'description' },
   { title: 'Created At', align: 'start', sortable: false, key: 'created_at' },
 ]
@@ -88,6 +89,14 @@ onMounted(() => {
             @update:items-per-page="onItemsPerPageChange"
             class="elevation-1"
           >
+            <template #item.sku="{ item }">
+              {{ item.product_type?.code }}.{{ item.code }}
+            </template>
+
+          <template #item.product_type_name="{ item }">
+            {{ item.product_type?.name ?? '—' }}
+          </template>
+
           <template #item.description="{ item }">
             <span v-if="item.description">{{ item.description }}</span>
             <span v-else class="text-grey">—</span>
