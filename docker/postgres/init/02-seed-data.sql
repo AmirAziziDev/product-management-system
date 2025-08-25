@@ -1,8 +1,85 @@
 DO $$
 BEGIN
+  -- Seed product types first
+  IF (SELECT COUNT(*) FROM product_types) = 0 THEN
+    INSERT INTO product_types (code, name) VALUES
+      (100, 'Storage & Organization'),
+      (200, 'Seating'),
+      (300, 'Bedroom'),
+      (400, 'Tables'),
+      (500, 'Chairs');
+    RAISE NOTICE 'Database initialized with % product types', (SELECT COUNT(*) FROM product_types);
+  ELSE
+    RAISE NOTICE 'Database already contains % product types, skipping seed', (SELECT COUNT(*) FROM product_types);
+  END IF;
+
+  -- Seed products with logical product type associations
   IF (SELECT COUNT(*) FROM products) = 0 THEN
-    COPY products (code, name, description) FROM '/seeds/products.txt' 
-    WITH (FORMAT csv, DELIMITER ';', NULL '');
+    -- Storage & Organization products (type 100)
+    INSERT INTO products (code, name, description, product_type_id) VALUES
+      (101, 'Bookcase', 'Perfect for organizing books and displaying decorative items', 1),
+      (104, 'Shelf Unit', '', 1),
+      (105, 'Storage Unit', 'Ideal for organizing household items and keeping spaces tidy', 1),
+      (106, 'Shelving Unit Pine', 'Natural pine wood construction with multiple storage compartments', 1),
+      (121, 'Wardrobe Frame', 'Basic structure for building custom storage solutions', 1),
+      (122, 'Wardrobe Three Doors', '', 1),
+      (123, 'Two Door Wardrobe', 'Compact clothing storage with dual door access', 1),
+      (124, 'Wardrobe Oak Three Doors', 'Premium oak construction with triple door configuration', 1),
+      (125, 'Wardrobe Sliding Doors', '', 1),
+      (126, 'Wardrobe Three Doors White', 'Clean white finish with spacious triple compartment design', 1),
+      (127, 'Wardrobe Sliding Four Drawers', '', 1),
+      (128, 'Chest Six Drawers', 'Ample storage with six spacious drawer compartments', 1),
+      (129, 'Chest Three Drawers Pine', 'Natural pine wood with three convenient storage drawers', 1),
+      (130, 'Bedside Table', '', 1),
+      (131, 'Chest Six Drawers White', 'Clean white finish with six organized storage compartments', 1),
+      (132, 'Chest Five Drawers', '', 1),
+      (133, 'Chest Six Drawers Brown', 'Rich brown finish with six roomy storage drawers', 1),
+      (134, 'Chest Eight Drawers', 'Maximum storage capacity with eight organized compartments', 1),
+      (135, 'Chest Four Drawers', '', 1);
+
+    -- Seating products (type 200) - Sofas, sectionals, armchairs
+    INSERT INTO products (code, name, description, product_type_id) VALUES
+      (108, 'Sleeper Sectional', 'Comfortable seating that converts to a bed for guests', 2),
+      (109, 'Armchair Birch', 'Elegant single seat chair with birch wood frame', 2),
+      (110, 'Sectional Sofa', '', 2),
+      (111, 'Wing Chair', 'Classic high-back chair with distinctive winged sides', 2),
+      (112, 'Sectional Four Seat', '', 2),
+      (113, 'Sofa', 'Comfortable three-person seating for living room relaxation', 2),
+      (114, 'Loveseat', 'Cozy two-person seating perfect for intimate spaces', 2),
+      (115, 'Modular Sofa', '', 2),
+      (116, 'Corner Sofa', 'Space-saving L-shaped seating for corner placement', 2),
+      (117, 'Three Seat Sofa', '', 2),
+      (118, 'Sectional Four Seat Brown', 'Rich brown upholstery with spacious four-person seating', 2),
+      (119, 'Two Seat Sofa', 'Compact seating solution ideal for smaller living areas', 2),
+      (120, 'Corner Sofa Beige', '', 2);
+
+    -- Bedroom products (type 300) - Beds and daybeds
+    INSERT INTO products (code, name, description, product_type_id) VALUES
+      (102, 'Bed Frame High Oak', '', 3),
+      (103, 'Daybed Frame', 'Versatile seating and sleeping solution for small spaces', 3);
+
+    -- Tables (type 400) - All types of tables
+    INSERT INTO products (code, name, description, product_type_id) VALUES
+      (107, 'Coffee Table', '', 4),
+      (136, 'Dining Table Ash', 'Beautiful ash wood construction for elegant dining experiences', 4),
+      (137, 'Drop Leaf Table', '', 4),
+      (138, 'Dining Table Oak', 'Sturdy oak construction perfect for family meals', 4),
+      (139, 'Extendable Table', 'Adjustable size to accommodate different group sizes', 4),
+      (140, 'Dining Set', '', 4),
+      (141, 'Table Antique', 'Vintage-style dining surface with classic charm', 4),
+      (142, 'Dining Table Acacia', '', 4),
+      (143, 'Extendable Table Antique', 'Vintage design with adjustable length for versatile dining', 4),
+      (144, 'Extendable Table Round', 'Circular design that expands for larger gatherings', 4),
+      (145, 'Folding Table', '', 4);
+
+    -- Chairs (type 500) - Individual chairs
+    INSERT INTO products (code, name, description, product_type_id) VALUES
+      (146, 'Chair', 'Simple and functional single seat for various uses', 5),
+      (147, 'Chair Pine', '', 5),
+      (148, 'Wooden Chair', 'Classic wood construction with timeless appeal', 5),
+      (149, 'Upholstered Chair', 'Comfortable padded seating with fabric covering', 5),
+      (150, 'Chrome Chair', '', 5);
+
     RAISE NOTICE 'Database initialized with % products', (SELECT COUNT(*) FROM products);
   ELSE
     RAISE NOTICE 'Database already contains % products, skipping initial seed', (SELECT COUNT(*) FROM products);

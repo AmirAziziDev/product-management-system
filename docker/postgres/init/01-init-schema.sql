@@ -1,19 +1,26 @@
--- Database initialization script
--- This file is executed automatically when the PostgreSQL container starts
+CREATE TABLE product_types (
+    id SERIAL PRIMARY KEY,
+    code INTEGER NOT NULL UNIQUE CHECK (code >= 0),
+    name TEXT UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
--- Create products table
+COMMENT ON COLUMN product_types.code IS
+  'Stable business code (unsigned int). Used as the first part of SKU.';
+
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     code INTEGER NOT NULL UNIQUE CHECK (code >= 0),
     name TEXT NOT NULL UNIQUE,
     description TEXT NULL,
+    product_type_id INTEGER REFERENCES product_types(id),
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Add comment explaining the code column usage for SKU
 COMMENT ON COLUMN products.code IS
-  'Stable business code (unsigned int). Used as the second part of SKU (model_code).';
+  'Stable business code (unsigned int). Used as the second part of SKU.';
 
--- Create indexes for better performance
+CREATE INDEX idx_product_types_code ON product_types(code);
 CREATE INDEX idx_products_code ON products(code);
+CREATE INDEX idx_products_product_type_id ON products(product_type_id);
 CREATE INDEX idx_products_created_at ON products(created_at DESC);
