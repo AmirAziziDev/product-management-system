@@ -1,15 +1,15 @@
 package providers
 
 import (
+	"github.com/AmirAziziDev/product-management-system/repositories"
 	"github.com/AmirAziziDev/product-management-system/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
 )
 
 // NewRouter creates a new Gin router with all routes configured
-func NewRouter(logger *zap.Logger, db *sqlx.DB) *gin.Engine {
+func NewRouter(logger *zap.Logger, productRepo repositories.ProductRepository) *gin.Engine {
 	router := gin.Default()
-	routes.SetupRoutes(router, logger, db)
+	routes.SetupRoutes(router, logger, productRepo)
 	return router
 }

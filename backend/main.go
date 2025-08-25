@@ -11,6 +11,7 @@ func main() {
 			providers.NewLogger,
 			providers.NewDatabaseConfig,
 			providers.NewDatabase,
+			providers.NewProductRepository,
 			providers.NewRouter,
 			providers.NewHTTPServer,
 		),
