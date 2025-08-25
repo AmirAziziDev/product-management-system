@@ -25,11 +25,25 @@ func NewProductRepository(db *sqlx.DB) ProductRepository {
 func (r *productRepository) GetProducts(page, pageSize int) ([]models.Product, error) {
 	offset := (page - 1) * pageSize
 
-	var products []models.Product
-	query := "SELECT id, code, name, description, created_at FROM products ORDER BY created_at DESC LIMIT $1 OFFSET $2"
+	query := `
+		SELECT
+		  p.id,
+		  p.code,
+		  p.name,
+		  p.description,
+		  p.created_at,
+		  pt.id         AS "product_type.id",
+		  pt.code       AS "product_type.code",
+		  pt.name       AS "product_type.name",
+		  pt.created_at AS "product_type.created_at"
+		FROM products p
+		INNER JOIN product_types pt ON pt.id = p.product_type_id
+		ORDER BY p.created_at DESC
+		LIMIT $1 OFFSET $2;
+	`
 
-	err := r.db.Select(&products, query, pageSize, offset)
-	if err != nil {
+	var products []models.Product
+	if err := r.db.Select(&products, query, pageSize, offset); err != nil {
 		return nil, err
 	}
 
