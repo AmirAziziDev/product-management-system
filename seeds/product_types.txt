@@ -1,0 +1,5 @@
+100;Storage & Organization
+200;Seating
+300;Bedroom
+400;Tables
+500;Chairs
