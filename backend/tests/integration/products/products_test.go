@@ -65,9 +65,10 @@ func TestProductsEndpointHappyPath(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 	productRepo := repositories.NewProductRepository(db)
+	productTypeRepo := repositories.NewProductTypeRepository(db)
 
 	gin.SetMode(gin.TestMode)
-	router := providers.NewRouter(logger, productRepo)
+	router := providers.NewRouter(logger, productRepo, productTypeRepo)
 
 	req, err := http.NewRequest("GET", "/api/v1/products?page=1&page_size=20", nil)
 	require.NoError(t, err)

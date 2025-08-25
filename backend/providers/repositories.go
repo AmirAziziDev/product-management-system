@@ -9,3 +9,8 @@ import (
 func NewProductRepository(db *sqlx.DB) repositories.ProductRepository {
 	return repositories.NewProductRepository(db)
 }
+
+// NewProductTypeRepository creates a new product type repository instance
+func NewProductTypeRepository(db *sqlx.DB) repositories.ProductTypeRepository {
+	return repositories.NewProductTypeRepository(db)
+}

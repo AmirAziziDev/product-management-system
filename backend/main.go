@@ -12,6 +12,7 @@ func main() {
 			providers.NewDatabaseConfig,
 			providers.NewDatabase,
 			providers.NewProductRepository,
+			providers.NewProductTypeRepository,
 			providers.NewRouter,
 			providers.NewHTTPServer,
 		),
