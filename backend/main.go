@@ -9,6 +9,8 @@ func main() {
 	fx.New(
 		fx.Provide(
 			providers.NewLogger,
+			providers.NewDatabaseConfig,
+			providers.NewDatabase,
 			providers.NewRouter,
 			providers.NewHTTPServer,
 		),

@@ -5,23 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/AmirAziziDev/product-management-system/routes"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
-
-// NewLogger creates a new structured logger
-func NewLogger() (*zap.Logger, error) {
-	return zap.NewProduction()
-}
-
-// NewRouter creates a new Gin router with all routes configured
-func NewRouter() *gin.Engine {
-	router := gin.Default()
-	routes.SetupRoutes(router)
-	return router
-}
 
 // NewHTTPServer creates a new HTTP server
 func NewHTTPServer(router *gin.Engine) *http.Server {
