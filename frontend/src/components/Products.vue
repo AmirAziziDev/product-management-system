@@ -9,11 +9,12 @@ const page = ref(1)
 const pageSize = ref(20)
 
 const headers = [
-  { title: 'SKU', align: 'start', sortable: false, key: 'sku' },
-  { title: 'Name', align: 'start', sortable: false, key: 'name' },
-  { title: 'Product Type', align: 'start', sortable: false, key: 'product_type_name' },
-  { title: 'Description', align: 'start', sortable: false, key: 'description' },
-  { title: 'Created At', align: 'start', sortable: false, key: 'created_at' },
+  { title: 'SKU', align: 'start', sortable: false, key: 'sku', width: '100px' },
+  { title: 'Name', align: 'start', sortable: false, key: 'name', width: '250px' },
+  { title: 'Product Type', align: 'start', sortable: false, key: 'product_type_name', width: '200px' },
+  { title: 'Colors', align: 'start', sortable: false, key: 'colors', width: '200px' },
+  { title: 'Description', align: 'start', sortable: false, key: 'description', width: '300px' },
+  { title: 'Created At', align: 'start', sortable: false, key: 'created_at', width: '200px' },
 ]
 
 async function fetchProducts(p = page.value, ipp = pageSize.value) {
@@ -44,7 +45,6 @@ function onPageChange(newPage) {
 
 function onItemsPerPageChange(newIpp) {
   pageSize.value = newIpp
-  // reset to first page when page size changes (common UX)
   page.value = 1
   fetchProducts(1, newIpp)
 }
@@ -52,18 +52,12 @@ function onItemsPerPageChange(newIpp) {
 function formatDate(dateString) {
   if (!dateString) return ''
   return new Date(dateString).toLocaleDateString('sv-SE', {
-    year: 'numeric',
-    month: '2-digit',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+    year: 'numeric', month: '2-digit', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
   })
 }
 
-onMounted(() => {
-  fetchProducts()
-})
+onMounted(fetchProducts)
 </script>
 
 <template>
@@ -89,33 +83,45 @@ onMounted(() => {
             @update:items-per-page="onItemsPerPageChange"
             class="elevation-1"
           >
+            <!-- SKU -->
             <template #item.sku="{ item }">
               {{ item.product_type?.code }}.{{ item.code }}
             </template>
 
-          <template #item.product_type_name="{ item }">
-            {{ item.product_type?.name ?? '—' }}
-          </template>
+            <!-- Product type name -->
+            <template #item.product_type_name="{ item }">
+              {{ item.product_type?.name ?? '—' }}
+            </template>
 
-          <template #item.description="{ item }">
-            <span v-if="item.description">{{ item.description }}</span>
-            <span v-else class="text-grey">—</span>
-          </template>
+            <!-- Colors (comma-separated) -->
+            <template #item.colors="{ item }">
+              <span v-if="item.colors?.length">
+                {{ item.colors.map(c => c.name).join(', ') }}
+              </span>
+              <span v-else class="text-grey">—</span>
+            </template>
 
-          <template #item.created_at="{ item }">
-            {{ formatDate(item.created_at) }}
-          </template>
+            <!-- Description -->
+            <template #item.description="{ item }">
+              <span v-if="item.description">{{ item.description }}</span>
+              <span v-else class="text-grey">—</span>
+            </template>
 
-          <template #no-data>
-            <v-alert
-              :value="!loading && products.length === 0"
-              color="info"
-              icon="mdi-information"
-              class="ma-4"
-            >
-              No products found.
-            </v-alert>
-          </template>
+            <!-- Created at -->
+            <template #item.created_at="{ item }">
+              {{ formatDate(item.created_at) }}
+            </template>
+
+            <template #no-data>
+              <v-alert
+                :value="!loading && products.length === 0"
+                color="info"
+                icon="mdi-information"
+                class="ma-4"
+              >
+                No products found.
+              </v-alert>
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
