@@ -58,8 +58,20 @@ onMounted(fetchProducts)
   <v-container>
     <v-row>
       <v-col>
-        <h1 class="text-h4 mb-4">Products</h1>
-
+        <v-row class="mb-4" align="center">
+          <v-col>
+            <h1 class="text-h4">Products</h1>
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
+              color="primary"
+              variant="elevated"
+              @click="$router.push('/products/create')"
+            >
+              Create Product
+            </v-btn>
+          </v-col>
+        </v-row>
         <v-card>
           <v-card-title>
             <span class="text-h6">Product List</span>
