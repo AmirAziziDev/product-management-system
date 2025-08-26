@@ -13,6 +13,7 @@ func main() {
 			providers.NewDatabase,
 			providers.NewProductRepository,
 			providers.NewProductTypeRepository,
+			providers.NewColorRepository,
 			providers.NewRouter,
 			providers.NewHTTPServer,
 		),

@@ -9,10 +9,10 @@ import (
 )
 
 // NewRouter creates a new Gin router with all routes configured
-func NewRouter(logger *zap.Logger, productRepo repositories.ProductRepository, productTypeRepo repositories.ProductTypeRepository) *gin.Engine {
+func NewRouter(logger *zap.Logger, productRepo repositories.ProductRepository, productTypeRepo repositories.ProductTypeRepository, colorRepo repositories.ColorRepository) *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.CORS())
 
-	routes.SetupRoutes(router, logger, productRepo, productTypeRepo)
+	routes.SetupRoutes(router, logger, productRepo, productTypeRepo, colorRepo)
 	return router
 }

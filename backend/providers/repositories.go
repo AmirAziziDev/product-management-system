@@ -14,3 +14,8 @@ func NewProductRepository(db *sqlx.DB) repositories.ProductRepository {
 func NewProductTypeRepository(db *sqlx.DB) repositories.ProductTypeRepository {
 	return repositories.NewProductTypeRepository(db)
 }
+
+// NewColorRepository creates a new color repository instance
+func NewColorRepository(db *sqlx.DB) repositories.ColorRepository {
+	return repositories.NewColorRepository(db)
+}
