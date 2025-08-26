@@ -41,7 +41,7 @@ func ListProducts(logger *zap.Logger, repo repositories.ProductRepository) gin.H
 
 		go func() {
 			defer wg.Done()
-			products, productsErr = repo.GetProducts(page, pageSize)
+			products, productsErr = repo.ListProducts(page, pageSize)
 		}()
 
 		wg.Wait()
