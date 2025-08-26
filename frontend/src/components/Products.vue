@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '../../api/axios.js'
+import axios from 'axios'
 
 const products = ref([])
 const loading = ref(false)
