@@ -13,6 +13,8 @@ A simple **Product Management System** with a **Vue + Vuetify** frontend and a *
 - [Running Locally (no Docker)](#running-locally-no-docker)
 - [Docker](#docker)
 - [Project Structure](#project-structure)
+- [Entity Relationship Diagram](#entity-relationship-diagram)
+- [Table Definitions](#table-definitions)
 - [Scripts](#scripts)
 - [API](#api)
     - [Products](#products)
@@ -20,9 +22,6 @@ A simple **Product Management System** with a **Vue + Vuetify** frontend and a *
     - [Colors](#colors)
     - [Health](#health)
     - [Error Format](#error-format)
-- [Development Notes](#development-notes)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ---
 
@@ -30,9 +29,12 @@ A simple **Product Management System** with a **Vue + Vuetify** frontend and a *
 
 The system lets you:
 
-- Create a product with a **code**, **name**, **type**, and **one or more colors** (description is optional).
+- Create a product with **code**, **name**, **type**, and **one or more colors** (description is optional).
 - View a paginated list of products with their **type** and **colors**.
 - Run everything with **Docker Compose** or run **frontend** and **backend** separately.
+
+**SKU concept:** In this demo, you can think of the SKU as a dotted string combining business codes:  
+`<product_type.code>.<product.code>.<color.code>` → e.g., `304.101.10`.
 
 If you are here for the task description, see **[`task.md`](task.md)**.
 
@@ -162,6 +164,124 @@ product-management-system/
 
 ---
 
+## Entity Relationship Diagram
+
+
+```mermaid
+erDiagram
+    PRODUCT_TYPES ||--o{ PRODUCTS : categorizes
+    PRODUCTS      ||--o{ PRODUCTS_COLORS : has
+    COLORS        ||--o{ PRODUCTS_COLORS : has
+
+    PRODUCT_TYPES {
+        INT id PK
+        INT code UK ">= 0"
+        TEXT name UK
+        TIMESTAMPTZ created_at
+    }
+
+    PRODUCTS {
+        INT id PK
+        INT code UK ">= 0"
+        TEXT name UK
+        TEXT description
+        INT product_type_id FK
+        TIMESTAMPTZ created_at
+    }
+
+    COLORS {
+        INT id PK
+        INT code UK ">= 0"
+        TEXT name UK
+        TEXT hex "like #RRGGBB"
+        TIMESTAMPTZ created_at
+    }
+
+    PRODUCTS_COLORS {
+        INT product_id PK, FK
+        INT color_id   PK, FK
+    }
+```
+
+> Codes are **stable business identifiers** (non‑negative integers).  
+> Example SKU: `<type.code>.<product.code>.<color.code>`.
+
+---
+
+## Table Definitions
+
+> The SQL below matches the current schema (PostgreSQL).
+
+### 1) `product_types`
+```sql
+CREATE TABLE product_types
+(
+    id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    code       INTEGER     NOT NULL UNIQUE CHECK (code >= 0),
+    name       TEXT        NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON COLUMN product_types.code IS
+  'Stable business code (unsigned int). Used as the first part of SKU.';
+
+CREATE INDEX idx_product_types_code ON product_types (code);
+CREATE INDEX idx_product_types_created_at ON product_types (created_at);
+```
+
+### 2) `products`
+```sql
+CREATE TABLE products
+(
+    id              INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    code            INTEGER     NOT NULL UNIQUE CHECK (code >= 0),
+    name            TEXT        NOT NULL UNIQUE,
+    description     TEXT,
+    product_type_id INTEGER     NOT NULL REFERENCES product_types (id) ON DELETE CASCADE,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON COLUMN products.code IS
+  'Stable business code (unsigned int). Used as the second part of SKU.';
+
+CREATE INDEX idx_products_code ON products (code);
+CREATE INDEX idx_products_product_type_id ON products (product_type_id);
+CREATE INDEX idx_products_created_at ON products (created_at);
+```
+
+### 3) `colors`
+```sql
+CREATE TABLE colors
+(
+    id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    code       INTEGER     NOT NULL UNIQUE CHECK (code >= 0),
+    name       TEXT        NOT NULL UNIQUE,
+    hex        TEXT        NOT NULL CHECK (hex ~ '^#[0-9A-Fa-f]{6}$'),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON COLUMN colors.code IS
+  'Stable business code (unsigned int). Used as the third part of SKU.';
+
+CREATE INDEX idx_colors_code ON colors (code);
+CREATE INDEX idx_colors_created_at ON colors (created_at);
+```
+
+### 4) `products_colors` (junction)
+```sql
+CREATE TABLE products_colors
+(
+    product_id INTEGER NOT NULL REFERENCES products (id),
+    color_id   INTEGER NOT NULL REFERENCES colors (id),
+    PRIMARY KEY (product_id, color_id)
+);
+
+CREATE INDEX idx_products_colors_product_id ON products_colors (product_id);
+CREATE INDEX idx_products_colors_color_id ON products_colors (color_id);
+```
+
+---
+
 ## Scripts
 
 ### Frontend (Vue)
@@ -271,13 +391,12 @@ product-management-system/
 
 ### Error Format
 
-Use a **minimal and consistent** format:
+Use a **minimal and consistent** format. For field-level validation:
 
-- **Validation errors (per-field):**
 ```json
 {
   "errors": {
-    "product_type_id": "product type does not exist",
+    "product_type_id": "product type does not exist"
   }
 }
 ```
@@ -286,23 +405,3 @@ Use a **minimal and consistent** format:
 > Show messages near the related inputs and a general message at the top if needed.
 
 ---
-
-## Development Notes
-
-- **Sorting:** Product list is ordered by `created_at DESC` in the backend.
-- **Pagination:** Use `page` and `page_size` query params.
-- **CORS:** Enabled to allow frontend requests during development.
-- **Logging:** Backend logs requests and errors (Gin + zap).
-- **Testing:** Run `go test ./...` inside `backend`.
-
----
-
-## Troubleshooting
-
-- **Ports already in use**: stop other apps or change `BACKEND_PORT` / `FRONTEND_PORT` in `.env`.
-- **DB connection fails**: check `POSTGRES_*` variables and container logs.
-- **Migrations**: if you added new tables, make sure the DB schema matches your code.
-- **Frontend cannot reach backend**: verify CORS and that the API URL matches your frontend config.
-
----
-
