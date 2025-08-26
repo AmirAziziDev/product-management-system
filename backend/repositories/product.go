@@ -2,14 +2,9 @@ package repositories
 
 import (
 	"github.com/AmirAziziDev/product-management-system/models"
+	"github.com/AmirAziziDev/product-management-system/repositories/interfaces"
 	"github.com/jmoiron/sqlx"
 )
-
-// ProductRepository defines the interface for product data operations
-type ProductRepository interface {
-	ListProducts(page, pageSize int) ([]models.Product, error)
-	GetProductsCount() (int, error)
-}
 
 // productRepository implements ProductRepository
 type productRepository struct {
@@ -17,7 +12,7 @@ type productRepository struct {
 }
 
 // NewProductRepository creates a new product repository instance
-func NewProductRepository(db *sqlx.DB) ProductRepository {
+func NewProductRepository(db *sqlx.DB) interfaces.ProductRepository {
 	return &productRepository{db: db}
 }
 

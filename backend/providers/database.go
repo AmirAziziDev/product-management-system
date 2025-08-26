@@ -24,8 +24,8 @@ func NewDatabaseConfig() *DatabaseConfig {
 	return &DatabaseConfig{
 		Host:     getEnvOrDefault("POSTGRES_HOST", "localhost"),
 		Port:     getEnvOrDefault("POSTGRES_PORT", "5432"),
-		User:     getEnvOrDefault("POSTGRES_USER", "postgres"),
-		Password: getEnvOrDefault("POSTGRES_PASSWORD", ""),
+		User:     getEnvOrDefault("POSTGRES_USER", "product_user"),
+		Password: getEnvOrDefault("POSTGRES_PASSWORD", "product_password"),
 		DBName:   getEnvOrDefault("POSTGRES_DB", "product_management"),
 		SSLMode:  getEnvOrDefault("POSTGRES_SSLMODE", "disable"),
 	}

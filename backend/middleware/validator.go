@@ -12,8 +12,8 @@ type ProductsQueryParams struct {
 	PageSize int `form:"page_size" binding:"omitempty,min=1,max=100"`
 }
 
-// ValidateProductsQuery validates query parameters for products list endpoint
-func ValidateProductsQuery() gin.HandlerFunc {
+// ValidateProductsRequest validates query parameters for products list endpoint
+func ValidateProductsRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var params ProductsQueryParams
 

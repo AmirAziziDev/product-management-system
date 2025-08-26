@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/AmirAziziDev/product-management-system/models"
-	"github.com/AmirAziziDev/product-management-system/repositories"
+	"github.com/AmirAziziDev/product-management-system/repositories/interfaces"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type ProductsResponse struct {
 	} `json:"meta"`
 }
 
-func ListProducts(logger *zap.Logger, repo repositories.ProductRepository) gin.HandlerFunc {
+func ListProducts(logger *zap.Logger, repo interfaces.ProductRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		logger.Info("ListProducts handler called")
 
