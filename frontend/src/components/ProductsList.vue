@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { fetchProducts as fetchProductsAPI } from '@/api/products'
 
 const products = ref([])
 const loading = ref(false)
@@ -20,17 +20,11 @@ const headers = [
 async function fetchProducts(p = page.value, ipp = pageSize.value) {
   loading.value = true
   try {
-    const { data } = await axios.get('/api/v1/products', {
-      params: {
-        page: p,
-        page_size: ipp,
-      },
-    })
-    products.value = data?.data ?? []
-    totalItems.value = data?.meta?.total ?? 0
-    page.value = data?.meta?.page ?? p
+    const result = await fetchProductsAPI(p, ipp)
+    products.value = result.products
+    totalItems.value = result.meta.total
+    page.value = result.meta.page
   } catch (err) {
-    console.error('Error fetching products:', err)
     products.value = []
     totalItems.value = 0
   } finally {

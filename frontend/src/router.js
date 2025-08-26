@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Products from './components/Products.vue'
+import {createRouter, createWebHistory} from 'vue-router'
+import ProductsView from './views/ProductView.vue'
 
 const routes = [
   {
@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/product',
     name: 'Products',
-    component: Products
+    component: ProductsView
   }
 ]
 
